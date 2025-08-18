@@ -25,13 +25,16 @@ const DiseaseManager = () => {
   const [editingId, setEditingId] = useState(null);
   const [highlightedRow, setHighlightedRow] = useState(null);
 
-  // Fetch all diseases
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   const fetchDiseases = async () => {
     try {
-      const res = await axios.get(" https://symptoms-analyzer.onrender.com/api/diseases");
-      setDiseases(res.data);
+      const res = await axios.get(`${API_BASE_URL}/api/diseases`);
+      setDiseases(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error fetching diseases:", err);
+      setDiseases([]);
     }
   };
 
@@ -39,7 +42,6 @@ const DiseaseManager = () => {
     fetchDiseases();
   }, []);
 
-  // Add / Update disease
   const handleSubmit = async (e) => {
     e.preventDefault();
     const diseaseData = {
@@ -52,15 +54,12 @@ const DiseaseManager = () => {
       let response;
       if (editingId) {
         response = await axios.put(
-          ` https://symptoms-analyzer.onrender.com/api/diseases/${editingId}`,
+          `${API_BASE_URL}/api/diseases/${editingId}`,
           diseaseData
         );
         setEditingId(null);
       } else {
-        response = await axios.post(
-          " https://symptoms-analyzer.onrender.com/api/diseases",
-          diseaseData
-        );
+        response = await axios.post(`${API_BASE_URL}/api/diseases`, diseaseData);
       }
 
       setName("");
@@ -68,7 +67,6 @@ const DiseaseManager = () => {
       setDescription("");
       fetchDiseases();
 
-      // Highlight new/updated row
       if (response?.data?._id) {
         setHighlightedRow(response.data._id);
         setTimeout(() => setHighlightedRow(null), 2000);
@@ -78,17 +76,15 @@ const DiseaseManager = () => {
     }
   };
 
-  // Delete disease
   const handleDelete = async (id) => {
     try {
-      await axios.delete(` https://symptoms-analyzer.onrender.com/api/diseases/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/diseases/${id}`);
       fetchDiseases();
     } catch (err) {
       console.error("Error deleting disease:", err);
     }
   };
 
-  // Edit disease
   const handleEdit = (disease) => {
     setEditingId(disease._id);
     setName(disease.name);
@@ -99,10 +95,9 @@ const DiseaseManager = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 5 }}>
       <Typography variant="h3" align="center" gutterBottom>
-       🩺 Disease Manager
+        🩺 Disease Manager
       </Typography>
 
-      {/* Form */}
       <Paper sx={{ p: 3, mb: 4 }}>
         <Typography variant="h6">
           {editingId ? "Edit Disease" : "Add New Disease"}
@@ -115,6 +110,7 @@ const DiseaseManager = () => {
             gap: 2,
             flexWrap: "wrap",
             mt: 2,
+            flexDirection: { xs: "column", sm: "row" },
           }}
         >
           <TextField
@@ -122,6 +118,7 @@ const DiseaseManager = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            InputLabelProps={{ shrink: true }}
             sx={{ flex: 1 }}
           />
           <TextField
@@ -129,6 +126,7 @@ const DiseaseManager = () => {
             value={symptoms}
             onChange={(e) => setSymptoms(e.target.value)}
             required
+            InputLabelProps={{ shrink: true }}
             sx={{ flex: 2 }}
           />
           <TextField
@@ -136,15 +134,20 @@ const DiseaseManager = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
+            InputLabelProps={{ shrink: true }}
             sx={{ flex: 2 }}
           />
-          <Button type="submit" variant="contained" color="primary">
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{ mt: { xs: 2, sm: 0 } }}
+          >
             {editingId ? "Update" : "Add"} Disease
           </Button>
         </Box>
       </Paper>
 
-      {/* Table */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ backgroundColor: "#1976d2" }}>

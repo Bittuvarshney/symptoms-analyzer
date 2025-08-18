@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Disease from "./models/disease.js";
+import Disease from "../models/disease.js";
 
 dotenv.config();
 
