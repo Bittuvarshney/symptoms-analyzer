@@ -28,7 +28,7 @@ const DiseaseManager = () => {
   // Fetch all diseases
   const fetchDiseases = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/diseases");
+      const res = await axios.get(" https://symptoms-analyzer.onrender.com/api/diseases");
       setDiseases(res.data);
     } catch (err) {
       console.error("Error fetching diseases:", err);
@@ -52,13 +52,13 @@ const DiseaseManager = () => {
       let response;
       if (editingId) {
         response = await axios.put(
-          `http://localhost:5000/api/diseases/${editingId}`,
+          ` https://symptoms-analyzer.onrender.com/api/diseases/${editingId}`,
           diseaseData
         );
         setEditingId(null);
       } else {
         response = await axios.post(
-          "http://localhost:5000/api/diseases",
+          " https://symptoms-analyzer.onrender.com/api/diseases",
           diseaseData
         );
       }
@@ -81,7 +81,7 @@ const DiseaseManager = () => {
   // Delete disease
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/diseases/${id}`);
+      await axios.delete(` https://symptoms-analyzer.onrender.com/api/diseases/${id}`);
       fetchDiseases();
     } catch (err) {
       console.error("Error deleting disease:", err);

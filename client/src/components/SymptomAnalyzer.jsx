@@ -35,14 +35,14 @@ const SymptomAnalyzer = () => {
     setResult(null);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/analyze", {
+      const res = await axios.post(" https://symptoms-analyzer.onrender.com/api/analyze", {
         symptoms: inputSymptoms.split(",").map((s) => s.trim()),
       });
 
       if (res.data?.diseaseFound) {
         setResult({ source: "Database", disease: res.data.disease });
       } else {
-        const aiRes = await axios.post("http://localhost:5000/api/ai/", {
+        const aiRes = await axios.post(" https://symptoms-analyzer.onrender.com/api/ai/", {
           symptoms: inputSymptoms.split(",").map((s) => s.trim()),
         });
         setResult({ source: "AI", disease: aiRes.data.disease });
